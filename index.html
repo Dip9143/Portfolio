@@ -17,9 +17,111 @@
 
   <title>Portfolio- Dip Kumar Majumder</title>  
 
-<link href="./main.3f6952e4.css" rel="stylesheet"></head>
+<link href="./main.3f6952e4.css" rel="stylesheet">
+
+<style>
+/* Additional styles for NASA image functionality */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.image-info {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  max-width: 300px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  transform: translateX(calc(100% + 20px));
+  transition: transform 0.3s ease;
+}
+
+.image-info.show {
+  transform: translateX(0);
+}
+
+.image-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: #4CAF50;
+}
+
+.image-info p {
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+.toggle-info {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  z-index: 1001;
+  transition: all 0.3s ease;
+}
+
+.toggle-info:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+/* Dynamic text color based on background */
+.hero-full-container .text-content h1 {
+  transition: color 0.5s ease, text-shadow 0.5s ease;
+}
+
+.hero-full-container.dark-bg .text-content h1 {
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hero-full-container.light-bg .text-content h1 {
+  color: #222;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+  .image-info {
+    bottom: 80px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    transform: translateY(100%);
+  }
+  
+  .image-info.show {
+    transform: translateY(0);
+  }
+}
+</style>
+</head>
 
 <body class="minimal">
+<div id="loading" class="loading-overlay" style="display: none;">
+  <div>Loading today's space image from NASA...</div>
+</div>
+
 <div id="site-border-left"></div>
 <div id="site-border-right"></div>
 <div id="site-border-top"></div>
@@ -49,7 +151,7 @@
   </nav>
 </header>
 <!-- Add your site or app content here -->
-  <div class="hero-full-container background-image-container white-text-container" style="background-image: url('./assets/images/space.jpg')">
+  <div id="hero-container" class="hero-full-container background-image-container white-text-container" style="background-image: url('./assets/images/space.jpg')">
     <div class="container">
       <div class="row">
         <div class="col-xs-12">
@@ -78,6 +180,234 @@
     </div>
   </div>
 
+<button class="toggle-info" onclick="toggleImageInfo()">ℹ️</button>
+
+<div id="image-info" class="image-info">
+  <h4 id="image-title">NASA Space Image</h4>
+  <p><strong>Date:</strong> <span id="image-date">Loading...</span></p>
+  <p id="image-description">Loading NASA's Astronomy Picture of the Day...</p>
+</div>
+
+<script>
+// NASA API Configuration
+const NASA_API_KEY = 'BefGt1YgRUkBKnV4Yojhaa78fcUrX1WLATb9mAZJ';
+const NASA_APOD_URL = 'https://api.nasa.gov/planetary/apod?api_key=' + NASA_API_KEY;
+
+// Global variables
+let currentImageData = null;
+let isInfoVisible = false;
+
+// Show loading overlay
+function showLoading() {
+  const loading = document.getElementById('loading');
+  loading.style.display = 'flex';
+}
+
+// Hide loading overlay
+function hideLoading() {
+  const loading = document.getElementById('loading');
+  loading.style.opacity = '0';
+  setTimeout(function() {
+    loading.style.display = 'none';
+  }, 300);
+}
+
+// Fetch NASA's Astronomy Picture of the Day
+function fetchNASAImage() {
+  showLoading();
+  
+  fetch(NASA_APOD_URL)
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      console.log('NASA API Response:', data);
+      
+      // Check if it's an image (not a video)
+      if (data.media_type === 'image') {
+        setBackgroundImage(data);
+      } else {
+        // If today's APOD is a video, get yesterday's image
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        
+        return fetch(NASA_APOD_URL + '&date=' + yesterdayStr);
+      }
+    })
+    .then(function(response) {
+      if (response) {
+        return response.json();
+      }
+    })
+    .then(function(data) {
+      if (data && data.media_type === 'image') {
+        setBackgroundImage(data);
+      } else {
+        // Keep original fallback image
+        hideLoading();
+        setDefaultImageInfo();
+      }
+    })
+    .catch(function(error) {
+      console.error('Error fetching NASA image:', error);
+      hideLoading();
+      setDefaultImageInfo();
+    });
+}
+
+// Set background image
+function setBackgroundImage(imageData) {
+  const heroContainer = document.getElementById('hero-container');
+  const imageUrl = imageData.hdurl || imageData.url;
+  
+  console.log('Setting background image:', imageUrl);
+  
+  // Create a new image to preload
+  const img = new Image();
+  
+  img.onload = function() {
+    console.log('Image loaded successfully');
+    heroContainer.style.backgroundImage = "url('" + imageUrl + "')";
+    
+    // Analyze image brightness and adjust text color
+    analyzeImageBrightness(imageUrl, function(isDark) {
+      heroContainer.classList.remove('dark-bg', 'light-bg');
+      heroContainer.classList.add(isDark ? 'dark-bg' : 'light-bg');
+    });
+    
+    updateImageInfo(imageData);
+    hideLoading();
+  };
+  
+  img.onerror = function() {
+    console.log('Image failed to load, keeping original');
+    hideLoading();
+    setDefaultImageInfo();
+  };
+  
+  img.src = imageUrl;
+}
+
+// Set default image info for fallback
+function setDefaultImageInfo() {
+  updateImageInfo({
+    title: 'Space Background',
+    explanation: 'Beautiful space imagery to inspire your coding journey.',
+    date: new Date().toISOString().split('T')[0]
+  });
+}
+
+// Update image information panel
+function updateImageInfo(imageData) {
+  currentImageData = imageData;
+  
+  const titleElement = document.getElementById('image-title');
+  const dateElement = document.getElementById('image-date');
+  const descriptionElement = document.getElementById('image-description');
+  
+  if (titleElement) titleElement.textContent = imageData.title;
+  if (dateElement) dateElement.textContent = imageData.date;
+  if (descriptionElement) {
+    // Truncate long descriptions
+    const maxLength = 200;
+    let description = imageData.explanation || 'No description available.';
+    if (description.length > maxLength) {
+      description = description.substring(0, maxLength) + '...';
+    }
+    descriptionElement.textContent = description;
+  }
+}
+
+// Analyze image brightness to determine text color
+function analyzeImageBrightness(imageUrl, callback) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  
+  img.crossOrigin = 'anonymous';
+  
+  img.onload = function() {
+    canvas.width = 100; // Small canvas for performance
+    canvas.height = 100;
+    
+    try {
+      ctx.drawImage(img, 0, 0, 100, 100);
+      const imageData = ctx.getImageData(0, 0, 100, 100);
+      const data = imageData.data;
+      
+      let totalBrightness = 0;
+      let pixelCount = 0;
+      
+      // Sample every 4th pixel for performance
+      for (let i = 0; i < data.length; i += 16) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // Calculate brightness using luminance formula
+        const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+        totalBrightness += brightness;
+        pixelCount++;
+      }
+      
+      const averageBrightness = totalBrightness / pixelCount;
+      const isDark = averageBrightness < 128;
+      
+      console.log('Average brightness:', averageBrightness, 'isDark:', isDark);
+      callback(isDark);
+      
+    } catch (error) {
+      console.log('Could not analyze image brightness (CORS), defaulting to dark text');
+      callback(true); // Default to dark background assumption
+    }
+  };
+  
+  img.onerror = function() {
+    console.log('Could not load image for brightness analysis, defaulting to dark text');
+    callback(true); // Default to dark background assumption
+  };
+  
+  img.src = imageUrl;
+}
+
+// Toggle image info visibility
+function toggleImageInfo() {
+  const imageInfo = document.getElementById('image-info');
+  isInfoVisible = !isInfoVisible;
+  
+  if (isInfoVisible) {
+    imageInfo.classList.add('show');
+  } else {
+    imageInfo.classList.remove('show');
+  }
+}
+
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Page loaded, initializing...');
+  
+  // Fetch and set NASA image
+  fetchNASAImage();
+  
+  // Auto-show info panel briefly on first load
+  setTimeout(function() {
+    if (!isInfoVisible) {
+      toggleImageInfo();
+      // Auto-hide after 3 seconds
+      setTimeout(function() {
+        if (isInfoVisible) {
+          toggleImageInfo();
+        }
+      }, 3000);
+    }
+  }, 2000);
+});
+</script>
+
 <script>
   document.addEventListener("DOMContentLoaded", function (event) {
      type();
@@ -85,7 +415,7 @@
   });
 </script>
 
-
-<script type="text/javascript" src="./main.70a66962.js"></script></body>
+<script type="text/javascript" src="./main.70a66962.js"></script>
+</body>
 
 </html>
