@@ -101,6 +101,25 @@
   text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
 }
 
+.read-more-btn {
+  background: none;
+  border: none;
+  color: #4CAF50;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+  padding: 0;
+  margin-left: 5px;
+}
+
+.read-more-btn:hover {
+  color: #66BB6A;
+}
+
+.description-text {
+  transition: max-height 0.3s ease;
+}
+
 @media (max-width: 768px) {
   .image-info {
     bottom: 80px;
@@ -185,7 +204,7 @@
 <div id="image-info" class="image-info">
   <h4 id="image-title">NASA Space Image</h4>
   <p><strong>Date:</strong> <span id="image-date">Loading...</span></p>
-  <p id="image-description">Loading NASA's Astronomy Picture of the Day...</p>
+  <p class="description-text" id="image-description">Loading NASA's Astronomy Picture of the Day...</p>
 </div>
 
 <script>
@@ -196,35 +215,73 @@ const NASA_APOD_URL = 'https://api.nasa.gov/planetary/apod?api_key=' + NASA_API_
 // Global variables
 let currentImageData = null;
 let isInfoVisible = false;
+let isImageLoaded = false;
+let loadingTimeout = null;
+let isExpanded = false;
 
-// Show loading overlay
+// Debounce function to prevent rapid calls
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = function() {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Show loading overlay with timeout
 function showLoading() {
   const loading = document.getElementById('loading');
-  loading.style.display = 'flex';
+  if (loading) {
+    loading.style.display = 'flex';
+    loading.style.opacity = '1';
+    
+    // Set timeout to hide loading if it takes too long
+    loadingTimeout = setTimeout(function() {
+      hideLoading();
+      setDefaultImageInfo();
+    }, 10000); // 10 second timeout
+  }
 }
 
 // Hide loading overlay
 function hideLoading() {
+  if (loadingTimeout) {
+    clearTimeout(loadingTimeout);
+    loadingTimeout = null;
+  }
+  
   const loading = document.getElementById('loading');
-  loading.style.opacity = '0';
-  setTimeout(function() {
-    loading.style.display = 'none';
-  }, 300);
+  if (loading) {
+    loading.style.opacity = '0';
+    setTimeout(function() {
+      loading.style.display = 'none';
+    }, 300);
+  }
 }
 
-// Fetch NASA's Astronomy Picture of the Day
+// Optimized NASA image fetching with better error handling
 function fetchNASAImage() {
+  if (isImageLoaded) return; // Prevent multiple calls
+  
   showLoading();
   
-  fetch(NASA_APOD_URL)
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+  
+  fetch(NASA_APOD_URL, { signal: controller.signal })
     .then(function(response) {
+      clearTimeout(timeoutId);
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok: ' + response.status);
       }
       return response.json();
     })
     .then(function(data) {
-      console.log('NASA API Response:', data);
+      console.log('NASA API Response received');
       
       // Check if it's an image (not a video)
       if (data.media_type === 'image') {
@@ -235,12 +292,14 @@ function fetchNASAImage() {
         yesterday.setDate(yesterday.getDate() - 1);
         const yesterdayStr = yesterday.toISOString().split('T')[0];
         
-        return fetch(NASA_APOD_URL + '&date=' + yesterdayStr);
-      }
-    })
-    .then(function(response) {
-      if (response) {
-        return response.json();
+        const fallbackController = new AbortController();
+        const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 5000);
+        
+        return fetch(NASA_APOD_URL + '&date=' + yesterdayStr, { signal: fallbackController.signal })
+          .then(function(response) {
+            clearTimeout(fallbackTimeoutId);
+            return response.json();
+          });
       }
     })
     .then(function(data) {
@@ -253,37 +312,49 @@ function fetchNASAImage() {
       }
     })
     .catch(function(error) {
-      console.error('Error fetching NASA image:', error);
+      console.log('NASA API error:', error.name === 'AbortError' ? 'Request timeout' : error.message);
       hideLoading();
       setDefaultImageInfo();
     });
 }
 
-// Set background image
+// Optimized background image setting
 function setBackgroundImage(imageData) {
-  const heroContainer = document.getElementById('hero-container');
-  const imageUrl = imageData.hdurl || imageData.url;
+  if (isImageLoaded) return; // Prevent multiple image loads
   
-  console.log('Setting background image:', imageUrl);
+  const heroContainer = document.getElementById('hero-container');
+  if (!heroContainer) return;
+  
+  const imageUrl = imageData.hdurl || imageData.url;
   
   // Create a new image to preload
   const img = new Image();
   
+  const imageLoadTimeout = setTimeout(function() {
+    console.log('Image load timeout, using fallback');
+    hideLoading();
+    setDefaultImageInfo();
+  }, 8000);
+  
   img.onload = function() {
-    console.log('Image loaded successfully');
+    if (isImageLoaded) return; // Prevent duplicate processing
+    
+    clearTimeout(imageLoadTimeout);
+    isImageLoaded = true;
+    
+    console.log('NASA image loaded successfully');
     heroContainer.style.backgroundImage = "url('" + imageUrl + "')";
     
-    // Analyze image brightness and adjust text color
-    analyzeImageBrightness(imageUrl, function(isDark) {
-      heroContainer.classList.remove('dark-bg', 'light-bg');
-      heroContainer.classList.add(isDark ? 'dark-bg' : 'light-bg');
-    });
+    // Skip brightness analysis for performance - just use dark background assumption
+    heroContainer.classList.remove('light-bg');
+    heroContainer.classList.add('dark-bg');
     
     updateImageInfo(imageData);
     hideLoading();
   };
   
   img.onerror = function() {
+    clearTimeout(imageLoadTimeout);
     console.log('Image failed to load, keeping original');
     hideLoading();
     setDefaultImageInfo();
@@ -294,14 +365,15 @@ function setBackgroundImage(imageData) {
 
 // Set default image info for fallback
 function setDefaultImageInfo() {
+  const today = new Date().toISOString().split('T')[0];
   updateImageInfo({
     title: 'Space Background',
-    explanation: 'Beautiful space imagery to inspire your coding journey.',
-    date: new Date().toISOString().split('T')[0]
+    explanation: 'Beautiful space imagery to inspire your coding journey. This stunning cosmic view serves as a reminder of the infinite possibilities that await in the world of technology and programming.',
+    date: today
   });
 }
 
-// Update image information panel
+// Update image information panel with read more functionality
 function updateImageInfo(imageData) {
   currentImageData = imageData;
   
@@ -309,74 +381,66 @@ function updateImageInfo(imageData) {
   const dateElement = document.getElementById('image-date');
   const descriptionElement = document.getElementById('image-description');
   
-  if (titleElement) titleElement.textContent = imageData.title;
-  if (dateElement) dateElement.textContent = imageData.date;
+  if (titleElement) titleElement.textContent = imageData.title || 'Space Image';
+  if (dateElement) dateElement.textContent = imageData.date || 'Today';
+  
   if (descriptionElement) {
-    // Truncate long descriptions
-    const maxLength = 200;
-    let description = imageData.explanation || 'No description available.';
-    if (description.length > maxLength) {
-      description = description.substring(0, maxLength) + '...';
+    const description = imageData.explanation || 'No description available.';
+    
+    // Create truncated and full versions
+    const maxLength = 150;
+    const needsReadMore = description.length > maxLength;
+    
+    if (needsReadMore) {
+      const truncatedText = description.substring(0, maxLength).trim() + '...';
+      
+      // Create read more button
+      const readMoreBtn = document.createElement('button');
+      readMoreBtn.className = 'read-more-btn';
+      readMoreBtn.textContent = 'Read More';
+      readMoreBtn.onclick = function() {
+        toggleDescription(description, truncatedText, readMoreBtn);
+      };
+      
+      // Set initial content
+      descriptionElement.innerHTML = truncatedText;
+      descriptionElement.appendChild(readMoreBtn);
+    } else {
+      descriptionElement.textContent = description;
     }
-    descriptionElement.textContent = description;
   }
 }
 
-// Analyze image brightness to determine text color
-function analyzeImageBrightness(imageUrl, callback) {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  const img = new Image();
+// Toggle between truncated and full description
+function toggleDescription(fullText, truncatedText, button) {
+  const descriptionElement = document.getElementById('image-description');
   
-  img.crossOrigin = 'anonymous';
-  
-  img.onload = function() {
-    canvas.width = 100; // Small canvas for performance
-    canvas.height = 100;
+  if (isExpanded) {
+    // Show truncated version
+    descriptionElement.innerHTML = truncatedText;
+    descriptionElement.appendChild(button);
+    button.textContent = 'Read More';
+  } else {
+    // Show full version
+    const readLessBtn = document.createElement('button');
+    readLessBtn.className = 'read-more-btn';
+    readLessBtn.textContent = ' Read Less';
+    readLessBtn.onclick = function() {
+      toggleDescription(fullText, truncatedText, button);
+    };
     
-    try {
-      ctx.drawImage(img, 0, 0, 100, 100);
-      const imageData = ctx.getImageData(0, 0, 100, 100);
-      const data = imageData.data;
-      
-      let totalBrightness = 0;
-      let pixelCount = 0;
-      
-      // Sample every 4th pixel for performance
-      for (let i = 0; i < data.length; i += 16) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        
-        // Calculate brightness using luminance formula
-        const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
-        totalBrightness += brightness;
-        pixelCount++;
-      }
-      
-      const averageBrightness = totalBrightness / pixelCount;
-      const isDark = averageBrightness < 128;
-      
-      console.log('Average brightness:', averageBrightness, 'isDark:', isDark);
-      callback(isDark);
-      
-    } catch (error) {
-      console.log('Could not analyze image brightness (CORS), defaulting to dark text');
-      callback(true); // Default to dark background assumption
-    }
-  };
+    descriptionElement.innerHTML = fullText;
+    descriptionElement.appendChild(readLessBtn);
+  }
   
-  img.onerror = function() {
-    console.log('Could not load image for brightness analysis, defaulting to dark text');
-    callback(true); // Default to dark background assumption
-  };
-  
-  img.src = imageUrl;
+  isExpanded = !isExpanded;
 }
 
-// Toggle image info visibility
-function toggleImageInfo() {
+// Debounced toggle function
+const toggleImageInfo = debounce(function() {
   const imageInfo = document.getElementById('image-info');
+  if (!imageInfo) return;
+  
   isInfoVisible = !isInfoVisible;
   
   if (isInfoVisible) {
@@ -384,27 +448,64 @@ function toggleImageInfo() {
   } else {
     imageInfo.classList.remove('show');
   }
-}
+}, 100);
 
-// Initialize everything when page loads
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('Page loaded, initializing...');
+// Optimized initialization
+function initializeApp() {
+  console.log('Initializing portfolio app...');
   
-  // Fetch and set NASA image
-  fetchNASAImage();
+  // Only fetch NASA image if not already loaded
+  if (!isImageLoaded) {
+    // Add small delay to ensure DOM is fully ready
+    setTimeout(fetchNASAImage, 100);
+  }
   
-  // Auto-show info panel briefly on first load
+  // Auto-show info panel briefly on first load (only once)
   setTimeout(function() {
     if (!isInfoVisible) {
       toggleImageInfo();
-      // Auto-hide after 3 seconds
+      // Auto-hide after 4 seconds
       setTimeout(function() {
         if (isInfoVisible) {
           toggleImageInfo();
         }
-      }, 3000);
+      }, 4000);
     }
-  }, 2000);
+  }, 2500);
+}
+
+// Single event listener with proper cleanup
+let isInitialized = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!isInitialized) {
+    isInitialized = true;
+    initializeApp();
+  }
+});
+
+// Fallback initialization
+if (document.readyState === 'loading') {
+  // DOM not ready yet
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!isInitialized) {
+      isInitialized = true;
+      initializeApp();
+    }
+  });
+} else {
+  // DOM already ready
+  if (!isInitialized) {
+    isInitialized = true;
+    initializeApp();
+  }
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+  if (loadingTimeout) {
+    clearTimeout(loadingTimeout);
+  }
 });
 </script>
 
