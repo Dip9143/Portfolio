@@ -3,173 +3,376 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta content="IE=edge" http-equiv="X-UA-Compatible">
-  <meta content="width=device-width,initial-scale=1" name="viewport">
-  <meta content="description" name="description">
-  <meta name="google" content="notranslate" />
-  <meta content="Mashup templates have been developped by Orson.io team" name="author">
-
-  <!-- Disable tap highlight on IE -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio of Dip Kumar Majumder, an IT enthusiast and aspiring data scientist.">
+  <meta name="author" content="Dip Kumar Majumder">
   <meta name="msapplication-tap-highlight" content="no">
-  
+  <meta name="robots" content="index, follow">
+
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-icon-180x180.png">
-  <link href="./assets/favicon.ico" rel="icon">
+  <link rel="icon" href="./assets/favicon.ico">
 
-  <title>Portfolio- Dip Kumar Majumder</title>  
+  <title>Portfolio - Dip Kumar Majumder</title>
+  <link href="./main.3f6952e4.css" rel="stylesheet">
 
-<link href="./main.3f6952e4.css" rel="stylesheet">
+  <style>
+    /* Fallback and stabilization for hero section */
+    #hero-container {
+      background-color: #0a0a0a;
+      min-height: 100vh;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 0.5s ease;
+    }
 
-<style>
-/* Additional styles for NASA image functionality */
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  color: white;
-  font-size: 1.2rem;
-}
+    /* Optimized and creative loading overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+      animation: nebulaPulse 6s ease-in-out infinite;
+    }
 
-.image-info {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 15px;
-  border-radius: 8px;
-  max-width: 300px;
-  font-size: 0.9rem;
-  z-index: 1000;
-  transform: translateX(calc(100% + 20px));
-  transition: transform 0.3s ease;
-}
+    @keyframes nebulaPulse {
+      0%, 100% { background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 70%); }
+      50% { background: radial-gradient(circle at center, #2a2a4e 0%, #0a0a0a 70%); }
+    }
 
-.image-info.show {
-  transform: translateX(0);
-}
+    .loading-content {
+      text-align: center;
+      padding: clamp(10px, 5vw, 20px);
+      box-sizing: border-box;
+      max-width: clamp(300px, 80vw, 500px);
+      width: 100%;
+      z-index: 2;
+      position: relative;
+    }
 
-.image-info h4 {
-  margin: 0 0 8px 0;
-  font-size: 1rem;
-  color: #4CAF50;
-}
+    .loading-title {
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 300;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #4CAF50, #81C784, #A5D6A7, #4CAF50);
+      background-size: 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: textGradient 4s ease-in-out infinite;
+    }
 
-.image-info p {
-  margin: 5px 0;
-  line-height: 1.4;
-}
+    @keyframes textGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-.toggle-info {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.2rem;
-  z-index: 1001;
-  transition: all 0.3s ease;
-}
+    .loading-subtitle {
+      font-size: clamp(0.8rem, 3vw, 1rem);
+      margin-bottom: 1.5rem;
+      opacity: 0.85;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      animation: fadeInText 1s ease-in;
+    }
 
-.toggle-info:hover {
-  background: rgba(0, 0, 0, 0.9);
-  transform: scale(1.1);
-}
+    @keyframes fadeInText {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 0.85; transform: translateY(0); }
+    }
 
-/* Dynamic text color based on background */
-.hero-full-container .text-content h1 {
-  transition: color 0.5s ease, text-shadow 0.5s ease;
-}
+    /* Cosmic animation container */
+    .space-animation {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
 
-.hero-full-container.dark-bg .text-content h1 {
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-}
+    /* Starfield with pulsating stars */
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+      animation: twinkle 3s ease-in-out infinite alternate;
+    }
 
-.hero-full-container.light-bg .text-content h1 {
-  color: #222;
-  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
-}
+    .star:nth-child(1) { width: 2px; height: 2px; top: 15%; left: 10%; animation-delay: 0s; }
+    .star:nth-child(2) { width: 3px; height: 3px; top: 35%; left: 85%; animation-delay: 0.6s; }
+    .star:nth-child(3) { width: 1.5px; height: 1.5px; top: 65%; left: 25%; animation-delay: 1.2s; }
+    .star:nth-child(4) { width: 2.5px; height: 2.5px; top: 10%; left: 75%; animation-delay: 1.8s; }
+    .star:nth-child(5) { width: 1px; height: 1px; top: 80%; left: 55%; animation-delay: 2.4s; }
 
-.read-more-btn {
-  background: none;
-  border: none;
-  color: #4CAF50;
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: inherit;
-  padding: 0;
-  margin-left: 5px;
-}
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.3); }
+    }
 
-.read-more-btn:hover {
-  color: #66BB6A;
-}
+    /* Galaxy spinner */
+    .galaxy-spinner {
+      position: relative;
+      width: clamp(80px, 20vw, 120px);
+      height: clamp(80px, 20vw, 120px);
+      margin: 1.5rem auto;
+      background: radial-gradient(circle, rgba(76, 175, 80, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: galaxyRotate 10s linear infinite;
+    }
 
-.description-text {
-  transition: max-height 0.3s ease;
-}
+    .galaxy-arm {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(76, 175, 80, 0.4) 10%, transparent 50%);
+      border-radius: 50%;
+      transform-origin: center;
+    }
 
-@media (max-width: 768px) {
-  .image-info {
-    bottom: 80px;
-    right: 10px;
-    left: 10px;
-    max-width: none;
-    transform: translateY(100%);
-  }
-  
-  .image-info.show {
-    transform: translateY(0);
-  }
-}
-</style>
+    .galaxy-arm:nth-child(1) { transform: rotate(0deg); }
+    .galaxy-arm:nth-child(2) { transform: rotate(120deg); }
+    .galaxy-arm:nth-child(3) { transform: rotate(240deg); }
+
+    @keyframes galaxyRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Comet trails */
+    .comet {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: linear-gradient(45deg, #4CAF50, transparent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.6);
+      animation: cometTrail 5s linear infinite;
+    }
+
+    .comet:nth-child(1) { top: 20%; left: 5%; animation-delay: 0s; }
+    .comet:nth-child(2) { top: 50%; left: 90%; animation-delay: 2s; }
+    .comet:nth-child(3) { top: 70%; left: 15%; animation-delay: 4s; }
+
+    @keyframes cometTrail {
+      0% { transform: translate(0, 0); opacity: 1; }
+      100% { transform: translate(200px, -100px); opacity: 0; }
+    }
+
+    /* Progress bar */
+    .progress-container {
+      width: 100%;
+      max-width: clamp(200px, 60vw, 300px);
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      margin: 1rem auto;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #81C784);
+      width: 0;
+      transition: width 0.5s ease;
+    }
+
+    .loading-status {
+      font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+      opacity: 0.7;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Hover/touch interaction for supported devices */
+    .loading-overlay:hover .galaxy-spinner {
+      animation-duration: 8s;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .loading-title { font-size: clamp(1.2rem, 4vw, 1.5rem); }
+      .loading-subtitle { font-size: clamp(0.7rem, 2.5vw, 0.9rem); margin-bottom: 1rem; }
+      .galaxy-spinner { width: clamp(60px, 15vw, 80px); height: clamp(60px, 15vw, 80px); }
+      .comet { animation-duration: 4s; }
+    }
+
+    @media (max-width: 480px) {
+      .loading-content { padding: 10px; }
+      .galaxy-spinner { width: clamp(50px, 12vw, 60px); height: clamp(50px, 12vw, 60px); }
+      .star:nth-child(n) { width: 1px; height: 1px; }
+      .comet { display: none; } /* Disable comets on very small screens for performance */
+    }
+
+    /* Image info panel (unchanged from original for context) */
+    .image-info {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      max-width: 280px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateX(calc(100% + 20px));
+      transition: transform 0.3s ease;
+    }
+
+    .image-info.show {
+      transform: translateX(0);
+    }
+
+    .image-info h4 {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+      color: #4CAF50;
+    }
+
+    .image-info p {
+      margin: 4px 0;
+      line-height: 1.3;
+    }
+
+    .toggle-info {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      z-index: 1001;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .toggle-info:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.1);
+    }
+
+    /* Dynamic text color for hero section */
+    .hero-full-container .text-content h1 {
+      transition: color 0.3s ease;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    }
+
+    .read-more-btn {
+      background: none;
+      border: none;
+      color: #4CAF50;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: inherit;
+      padding: 0;
+      margin-left: 4px;
+    }
+
+    .read-more-btn:hover {
+      color: #66BB6A;
+    }
+
+    .description-text {
+      transition: max-height 0.3s ease;
+      max-height: 100px;
+      overflow: hidden;
+    }
+
+    .description-text.expanded {
+      max-height: none;
+    }
+
+    @media (max-width: 768px) {
+      .image-info {
+        bottom: 70px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        transform: translateY(100%);
+      }
+      .image-info.show {
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 
 <body class="minimal">
-<div id="loading" class="loading-overlay" style="display: none;">
-  <div>Loading today's space image from NASA...</div>
-</div>
+  <div id="loading" class="loading-overlay">
+    <div class="space-animation">
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="comet"></div>
+      <div class="comet"></div>
+      <div class="comet"></div>
+    </div>
+    <div class="loading-content">
+      <h2 class="loading-title">Embarking on a Cosmic Journey</h2>
+      <p class="loading-subtitle" id="loading-subtitle">Navigating the Stars</p>
+      <div class="galaxy-spinner">
+        <div class="galaxy-arm"></div>
+        <div class="galaxy-arm"></div>
+        <div class="galaxy-arm"></div>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar"></div>
+      </div>
+      <p class="loading-status">Initializing starship systems...</p>
+    </div>
+  </div>
 
-<div id="site-border-left"></div>
-<div id="site-border-right"></div>
-<div id="site-border-top"></div>
-<div id="site-border-bottom"></div>
-<!-- Add your content of header -->
-<header>
-  <nav class="navbar  navbar-fixed-top navbar-inverse">
-    <div class="container">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+  <!-- Rest of the HTML remains unchanged -->
+  <div id="site-border-left"></div>
+  <div id="site-border-right"></div>
+  <div id="site-border-top"></div>
+  <div id="site-border-bottom"></div>
+
+  <header>
+    <nav class="navbar navbar-fixed-top navbar-inverse" aria-label="Main navigation">
+      <div class="container">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="./index.html" title="Home">01 : Home</a></li>
+            <li><a href="./skills.html" title="Skills">02 : Skills</a></li>
+            <li><a href="./about.html" title="About me">03 : About me</a></li>
+            <li><a href="./contact.html" title="Contact">04 : Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
 
-      <div class="collapse navbar-collapse" id="navbar-collapse">
-        <ul class="nav navbar-nav ">
-          <li><a href="./index.html" title="">01 : Home</a></li>
-          <li><a href="./skills.html" title="">02 : Skills</a></li>
-          <li><a href="./about.html" title="">03 : About me</a></li>
-          <li><a href="./contact.html" title="">04 : Contact</a></li>
-        </ul>
-
-
-      </div> 
-    </div>
-  </nav>
-</header>
-<!-- Add your site or app content here -->
   <div id="hero-container" class="hero-full-container background-image-container white-text-container" style="background-image: url('./assets/images/space.jpg')">
     <div class="container">
       <div class="row">
@@ -199,324 +402,450 @@
     </div>
   </div>
 
-<button class="toggle-info" onclick="toggleImageInfo()">ℹ️</button>
+  <button class="toggle-info" onclick="toggleImageInfo()" aria-label="Toggle NASA image information">ℹ️</button>
 
-<div id="image-info" class="image-info">
-  <h4 id="image-title">NASA Space Image</h4>
-  <p><strong>Date:</strong> <span id="image-date">Loading...</span></p>
-  <p class="description-text" id="image-description">Loading NASA's Astronomy Picture of the Day...</p>
-</div>
+  <div id="image-info" class="image-info" role="region" aria-label="NASA image details">
+    <h4 id="image-title">NASA Space Image</h4>
+    <p><strong>Date:</strong> <span id="image-date">Loading...</span></p>
+    <p class="description-text" id="image-description">Loading NASA's Astronomy Picture of the Day...</p>
+  </div>
 
-<script>
-// NASA API Configuration
-const NASA_API_KEY = 'BefGt1YgRUkBKnV4Yojhaa78fcUrX1WLATb9mAZJ';
-const NASA_APOD_URL = 'https://api.nasa.gov/planetary/apod?api_key=' + NASA_API_KEY;
+  <script>
+    // NASA API Configuration
+    const NASA_API_KEY = 'BefGt1YgRUkBKnV4Yojhaa78fcUrX1WLATb9mAZJ';
+    const NASA_APOD_URL = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`;
 
-// Global variables
-let currentImageData = null;
-let isInfoVisible = false;
-let isImageLoaded = false;
-let loadingTimeout = null;
-let isExpanded = false;
+    // Cache configuration
+    const CACHE_KEY = 'nasa_apod_cache';
+    const CACHE_TIMESTAMP_KEY = 'nasa_apod_cache_timestamp';
+    const CACHE_DATE_KEY = 'nasa_apod_cache_date';
 
-// Debounce function to prevent rapid calls
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = function() {
-      clearTimeout(timeout);
-      func(...args);
+    // State management
+    let state = {
+      isImageLoaded: false,
+      isInfoVisible: false,
+      isExpanded: false,
+      isPageFullyLoaded: false,
+      loadingSteps: { dom: false, styles: false, scripts: false, nasaImage: false, assets: false },
+      loadingTimeout: null
     };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
 
-// Show loading overlay with timeout
-function showLoading() {
-  const loading = document.getElementById('loading');
-  if (loading) {
-    loading.style.display = 'flex';
-    loading.style.opacity = '1';
-    
-    // Set timeout to hide loading if it takes too long
-    loadingTimeout = setTimeout(function() {
-      hideLoading();
-      setDefaultImageInfo();
-    }, 10000); // 10 second timeout
-  }
-}
+    // Creative loading messages
+    const loadingMessages = [
+      'Navigating the Stars',
+      'Orbiting Distant Galaxies',
+      'Scanning Cosmic Horizons',
+      'Warping Through Nebulas',
+      'Aligning Starship Systems'
+    ];
 
-// Hide loading overlay
-function hideLoading() {
-  if (loadingTimeout) {
-    clearTimeout(loadingTimeout);
-    loadingTimeout = null;
-  }
-  
-  const loading = document.getElementById('loading');
-  if (loading) {
-    loading.style.opacity = '0';
-    setTimeout(function() {
-      loading.style.display = 'none';
-    }, 300);
-  }
-}
+    // Update loading progress with dynamic messages
+    function updateLoadingProgress() {
+      const completedSteps = Object.values(state.loadingSteps).filter(Boolean).length;
+      const totalSteps = Object.keys(state.loadingSteps).length;
+      const progressPercent = (completedSteps / totalSteps) * 100;
+      const progressBar = document.querySelector('.progress-bar');
+      const loadingStatus = document.querySelector('.loading-status');
+      const loadingSubtitle = document.getElementById('loading-subtitle');
 
-// Optimized NASA image fetching with better error handling
-function fetchNASAImage() {
-  if (isImageLoaded) return; // Prevent multiple calls
-  
-  showLoading();
-  
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
-  
-  fetch(NASA_APOD_URL, { signal: controller.signal })
-    .then(function(response) {
-      clearTimeout(timeoutId);
-      if (!response.ok) {
-        throw new Error('Network response was not ok: ' + response.status);
+      if (progressBar) progressBar.style.width = `${progressPercent}%`;
+      if (loadingStatus) {
+        const messages = [
+          'Initializing starship systems...',
+          'Loading stellar components...',
+          'Connecting to NASA archives...',
+          'Downloading cosmic imagery...',
+          'Finalizing interstellar journey...'
+        ];
+        loadingStatus.textContent = messages[Math.min(completedSteps, messages.length - 1)];
       }
-      return response.json();
-    })
-    .then(function(data) {
-      console.log('NASA API Response received');
-      
-      // Check if it's an image (not a video)
-      if (data.media_type === 'image') {
-        setBackgroundImage(data);
-      } else {
-        // If today's APOD is a video, get yesterday's image
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0];
-        
-        const fallbackController = new AbortController();
-        const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 5000);
-        
-        return fetch(NASA_APOD_URL + '&date=' + yesterdayStr, { signal: fallbackController.signal })
-          .then(function(response) {
-            clearTimeout(fallbackTimeoutId);
-            return response.json();
-          });
+      if (loadingSubtitle) {
+        loadingSubtitle.textContent = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
       }
-    })
-    .then(function(data) {
-      if (data && data.media_type === 'image') {
-        setBackgroundImage(data);
-      } else {
-        // Keep original fallback image
-        hideLoading();
-        setDefaultImageInfo();
+
+      if (completedSteps === totalSteps && !state.isPageFullyLoaded) {
+        setTimeout(hidePageLoader, 500);
       }
-    })
-    .catch(function(error) {
-      console.log('NASA API error:', error.name === 'AbortError' ? 'Request timeout' : error.message);
-      hideLoading();
-      setDefaultImageInfo();
-    });
-}
-
-// Optimized background image setting
-function setBackgroundImage(imageData) {
-  if (isImageLoaded) return; // Prevent multiple image loads
-  
-  const heroContainer = document.getElementById('hero-container');
-  if (!heroContainer) return;
-  
-  const imageUrl = imageData.hdurl || imageData.url;
-  
-  // Create a new image to preload
-  const img = new Image();
-  
-  const imageLoadTimeout = setTimeout(function() {
-    console.log('Image load timeout, using fallback');
-    hideLoading();
-    setDefaultImageInfo();
-  }, 8000);
-  
-  img.onload = function() {
-    if (isImageLoaded) return; // Prevent duplicate processing
-    
-    clearTimeout(imageLoadTimeout);
-    isImageLoaded = true;
-    
-    console.log('NASA image loaded successfully');
-    heroContainer.style.backgroundImage = "url('" + imageUrl + "')";
-    
-    // Skip brightness analysis for performance - just use dark background assumption
-    heroContainer.classList.remove('light-bg');
-    heroContainer.classList.add('dark-bg');
-    
-    updateImageInfo(imageData);
-    hideLoading();
-  };
-  
-  img.onerror = function() {
-    clearTimeout(imageLoadTimeout);
-    console.log('Image failed to load, keeping original');
-    hideLoading();
-    setDefaultImageInfo();
-  };
-  
-  img.src = imageUrl;
-}
-
-// Set default image info for fallback
-function setDefaultImageInfo() {
-  const today = new Date().toISOString().split('T')[0];
-  updateImageInfo({
-    title: 'Space Background',
-    explanation: 'Beautiful space imagery to inspire your coding journey. This stunning cosmic view serves as a reminder of the infinite possibilities that await in the world of technology and programming.',
-    date: today
-  });
-}
-
-// Update image information panel with read more functionality
-function updateImageInfo(imageData) {
-  currentImageData = imageData;
-  
-  const titleElement = document.getElementById('image-title');
-  const dateElement = document.getElementById('image-date');
-  const descriptionElement = document.getElementById('image-description');
-  
-  if (titleElement) titleElement.textContent = imageData.title || 'Space Image';
-  if (dateElement) dateElement.textContent = imageData.date || 'Today';
-  
-  if (descriptionElement) {
-    const description = imageData.explanation || 'No description available.';
-    
-    // Create truncated and full versions
-    const maxLength = 150;
-    const needsReadMore = description.length > maxLength;
-    
-    if (needsReadMore) {
-      const truncatedText = description.substring(0, maxLength).trim() + '...';
-      
-      // Create read more button
-      const readMoreBtn = document.createElement('button');
-      readMoreBtn.className = 'read-more-btn';
-      readMoreBtn.textContent = 'Read More';
-      readMoreBtn.onclick = function() {
-        toggleDescription(description, truncatedText, readMoreBtn);
-      };
-      
-      // Set initial content
-      descriptionElement.innerHTML = truncatedText;
-      descriptionElement.appendChild(readMoreBtn);
-    } else {
-      descriptionElement.textContent = description;
     }
-  }
-}
 
-// Toggle between truncated and full description
-function toggleDescription(fullText, truncatedText, button) {
-  const descriptionElement = document.getElementById('image-description');
-  
-  if (isExpanded) {
-    // Show truncated version
-    descriptionElement.innerHTML = truncatedText;
-    descriptionElement.appendChild(button);
-    button.textContent = 'Read More';
-  } else {
-    // Show full version
-    const readLessBtn = document.createElement('button');
-    readLessBtn.className = 'read-more-btn';
-    readLessBtn.textContent = ' Read Less';
-    readLessBtn.onclick = function() {
-      toggleDescription(fullText, truncatedText, button);
-    };
-    
-    descriptionElement.innerHTML = fullText;
-    descriptionElement.appendChild(readLessBtn);
-  }
-  
-  isExpanded = !isExpanded;
-}
+    // Hide page loader
+    function hidePageLoader() {
+      if (state.isPageFullyLoaded) return;
+      state.isPageFullyLoaded = true;
+      const loading = document.getElementById('loading');
+      if (loading) {
+        loading.style.transition = 'opacity 0.5s ease';
+        loading.style.opacity = '0';
+        setTimeout(() => {
+          loading.style.display = 'none';
+          document.body.classList.add('loaded');
+        }, 500);
+      }
+    }
 
-// Debounced toggle function
-const toggleImageInfo = debounce(function() {
-  const imageInfo = document.getElementById('image-info');
-  if (!imageInfo) return;
-  
-  isInfoVisible = !isInfoVisible;
-  
-  if (isInfoVisible) {
-    imageInfo.classList.add('show');
-  } else {
-    imageInfo.classList.remove('show');
-  }
-}, 100);
+    // Wait for assets to load
+    function waitForAssets() {
+      const images = Array.from(document.images).filter(img => !img.hasAttribute('loading'));
+      const stylesheets = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+      let assetsToLoad = images.length + stylesheets.length;
+      let assetsLoaded = 0;
 
-// Optimized initialization
-function initializeApp() {
-  console.log('Initializing portfolio app...');
-  
-  // Only fetch NASA image if not already loaded
-  if (!isImageLoaded) {
-    // Add small delay to ensure DOM is fully ready
-    setTimeout(fetchNASAImage, 100);
-  }
-  
-  // Auto-show info panel briefly on first load (only once)
-  setTimeout(function() {
-    if (!isInfoVisible) {
-      toggleImageInfo();
-      // Auto-hide after 4 seconds
-      setTimeout(function() {
-        if (isInfoVisible) {
-          toggleImageInfo();
+      function assetLoaded() {
+        assetsLoaded++;
+        if (assetsLoaded >= assetsToLoad) {
+          state.loadingSteps.assets = true;
+          updateLoadingProgress();
         }
-      }, 4000);
+      }
+
+      images.forEach(img => {
+        img.setAttribute('loading', 'lazy');
+        if (img.complete) assetLoaded();
+        else {
+          img.addEventListener('load', assetLoaded);
+          img.addEventListener('error', assetLoaded);
+        }
+      });
+
+      stylesheets.forEach(link => {
+        if (link.sheet) assetLoaded();
+        else {
+          link.addEventListener('load', assetLoaded);
+          link.addEventListener('error', assetLoaded);
+        }
+      });
+
+      if (assetsToLoad === 0) {
+        state.loadingSteps.assets = true;
+        updateLoadingProgress();
+      }
     }
-  }, 2500);
-}
 
-// Single event listener with proper cleanup
-let isInitialized = false;
+    // Debounce utility
+    function debounce(fn, wait) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), wait);
+      };
+    }
 
-document.addEventListener('DOMContentLoaded', function() {
-  if (!isInitialized) {
-    isInitialized = true;
-    initializeApp();
-  }
-});
+    // Get today's date
+    function getTodayString() {
+      return new Date().toISOString().split('T')[0];
+    }
 
-// Fallback initialization
-if (document.readyState === 'loading') {
-  // DOM not ready yet
-  document.addEventListener('DOMContentLoaded', function() {
-    if (!isInitialized) {
+    // Check if new image fetch is needed
+    function shouldFetchNewImage() {
+      try {
+        const cachedDate = sessionStorage.getItem(CACHE_DATE_KEY);
+        return !cachedDate || cachedDate !== getTodayString() || !sessionStorage.getItem(CACHE_KEY);
+      } catch {
+        return true;
+      }
+    }
+
+    // Cache management
+    function cacheImageData(data) {
+      try {
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        sessionStorage.setItem(CACHE_DATE_KEY, getTodayString());
+        sessionStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+      } catch (error) {
+        console.error('Cache storage failed:', error);
+      }
+    }
+
+    function getCachedImageData() {
+      try {
+        const data = sessionStorage.getItem(CACHE_KEY);
+        return data ? JSON.parse(data) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    // Schedule daily cache refresh
+    function scheduleCacheRefresh() {
+      const now = new Date();
+      const midnight = new Date(now);
+      midnight.setDate(midnight.getDate() + 1);
+      midnight.setHours(0, 0, 0, 0);
+      setTimeout(() => {
+        sessionStorage.clear();
+        fetchNASAImage(true);
+        setInterval(() => {
+          sessionStorage.clear();
+          fetchNASAImage(true);
+        }, 24 * 60 * 60 * 1000);
+      }, midnight - now);
+    }
+
+    // Show/hide NASA loading
+    function showNASALoading() {
+      if (!state.isPageFullyLoaded) return;
+      const loading = document.getElementById('loading');
+      if (loading) {
+        loading.style.display = 'flex';
+        loading.style.opacity = '1';
+        loading.querySelector('.loading-title').textContent = 'Updating Cosmic View';
+        loading.querySelector('.loading-status').textContent = 'Connecting to NASA archives...';
+        const subtitle = loading.querySelector('#loading-subtitle');
+        if (subtitle) subtitle.textContent = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+        state.loadingTimeout = setTimeout(() => {
+          hideNASALoading();
+          setDefaultImageInfo();
+        }, 8000);
+      }
+    }
+
+    function hideNASALoading() {
+      if (state.loadingTimeout) {
+        clearTimeout(state.loadingTimeout);
+        state.loadingTimeout = null;
+      }
+      const loading = document.getElementById('loading');
+      if (loading && state.isPageFullyLoaded) {
+        loading.style.opacity = '0';
+        setTimeout(() => loading.style.display = 'none', 300);
+      }
+    }
+
+    // Fetch NASA image
+    async function fetchNASAImage(force = false) {
+      if (state.isImageLoaded && !force) return;
+      if (!force && !shouldFetchNewImage()) {
+        const cachedData = getCachedImageData();
+        if (cachedData) {
+          setBackgroundImage(cachedData, true);
+          state.loadingSteps.nasaImage = true;
+          updateLoadingProgress();
+          return;
+        }
+      }
+
+      if (state.isPageFullyLoaded) showNASALoading();
+
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        let response = await fetch(NASA_APOD_URL, { signal: controller.signal });
+        clearTimeout(timeout);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        let data = await response.json();
+
+        if (data.media_type !== 'image') {
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayStr = yesterday.toISOString().split('T')[0];
+          const fallbackController = new AbortController();
+          const fallbackTimeout = setTimeout(() => fallbackController.abort(), 5000);
+          response = await fetch(`${NASA_APOD_URL}&date=${yesterdayStr}`, { signal: fallbackController.signal });
+          clearTimeout(fallbackTimeout);
+          data = await response.json();
+        }
+
+        if (data.media_type === 'image') {
+          cacheImageData(data);
+          setBackgroundImage(data);
+        } else {
+          throw new Error('No image available');
+        }
+      } catch (error) {
+        console.error('NASA API error:', error.message);
+        const cachedData = getCachedImageData();
+        if (cachedData) {
+          setBackgroundImage(cachedData, true);
+        } else {
+          hideNASALoading();
+          setDefaultImageInfo();
+        }
+        state.loadingSteps.nasaImage = true;
+        updateLoadingProgress();
+      }
+    }
+
+    // Set background image
+    function setBackgroundImage(data, isCached = false) {
+      if (state.isImageLoaded && !isCached) return;
+      const heroContainer = document.getElementById('hero-container');
+      if (!heroContainer) return;
+
+      const imageUrl = data.hdurl || data.url;
+      if (isCached) {
+        heroContainer.style.backgroundImage = `url(${imageUrl})`;
+        updateImageInfo(data);
+        state.isImageLoaded = true;
+        state.loadingSteps.nasaImage = true;
+        updateLoadingProgress();
+        return;
+      }
+
+      const img = new Image();
+      const timeout = setTimeout(() => {
+        hideNASALoading();
+        setDefaultImageInfo();
+        state.loadingSteps.nasaImage = true;
+        updateLoadingProgress();
+      }, 8000);
+
+      img.onload = () => {
+        clearTimeout(timeout);
+        if (state.isImageLoaded) return;
+        state.isImageLoaded = true;
+        heroContainer.style.backgroundImage = `url(${imageUrl})`;
+        updateImageInfo(data);
+        hideNASALoading();
+        state.loadingSteps.nasaImage = true;
+        updateLoadingProgress();
+      };
+
+      img.onerror = () => {
+        clearTimeout(timeout);
+        hideNASALoading();
+        setDefaultImageInfo();
+        state.loadingSteps.nasaImage = true;
+        updateLoadingProgress();
+      };
+
+      img.src = imageUrl;
+    }
+
+    // Set default image info
+    function setDefaultImageInfo() {
+      updateImageInfo({
+        title: 'Space Background',
+        explanation: 'A cosmic view to inspire your coding journey.',
+        date: getTodayString()
+      });
+    }
+
+    // Update image info panel
+    function updateImageInfo(data) {
+      const title = document.getElementById('image-title');
+      const date = document.getElementById('image-date');
+      const desc = document.getElementById('image-description');
+
+      if (title) title.textContent = data.title || 'Space Image';
+      if (date) date.textContent = data.date || 'Today';
+      if (desc) {
+        const text = data.explanation || 'No description available.';
+        const maxLength = 120;
+        if (text.length > maxLength) {
+          const truncated = text.substring(0, maxLength).trim() + '...';
+          desc.innerHTML = truncated;
+          const btn = document.createElement('button');
+          btn.className = 'read-more-btn';
+          btn.textContent = 'Read More';
+          btn.onclick = () => toggleDescription(text, truncated, btn);
+          desc.appendChild(btn);
+        } else {
+          desc.textContent = text;
+        }
+      }
+    }
+
+    // Toggle description
+    function toggleDescription(full, truncated, btn) {
+      const desc = document.getElementById('image-description');
+      if (state.isExpanded) {
+        desc.innerHTML = truncated;
+        desc.appendChild(btn);
+        btn.textContent = 'Read More';
+      } else {
+        desc.textContent = full;
+        const readLess = document.createElement('button');
+        readLess.className = 'read-more-btn';
+        readLess.textContent = 'Read Less';
+        readLess.onclick = () => toggleDescription(full, truncated, btn);
+        desc.appendChild(readLess);
+      }
+      desc.classList.toggle('expanded');
+      state.isExpanded = !state.isExpanded;
+    }
+
+    // Toggle image info panel
+    const toggleImageInfo = debounce(() => {
+      const info = document.getElementById('image-info');
+      if (info) {
+        state.isInfoVisible = !state.isInfoVisible;
+        info.classList.toggle('show', state.isInfoVisible);
+      }
+    }, 100);
+
+    // Initialize app
+    function initialize() {
+      state.loadingSteps.dom = true;
+      updateLoadingProgress();
+      waitForAssets();
+      scheduleCacheRefresh();
+      fetchNASAImage();
+      state.loadingSteps.scripts = true;
+      updateLoadingProgress();
+
+      setTimeout(() => {
+        if (state.isPageFullyLoaded && !state.isInfoVisible) {
+          toggleImageInfo();
+          setTimeout(() => {
+            if (state.isInfoVisible) toggleImageInfo();
+          }, 4000);
+        }
+      }, 3000);
+    }
+
+    // Check page readiness
+    function checkReadiness() {
+      if (document.styleSheets.length > 0) {
+        state.loadingSteps.styles = true;
+        updateLoadingProgress();
+      }
+      setTimeout(() => {
+        if (!state.loadingSteps.styles) {
+          state.loadingSteps.styles = true;
+          updateLoadingProgress();
+        }
+      }, 1000);
+    }
+
+    // Event listeners
+    let isInitialized = false;
+    function setup() {
+      if (isInitialized) return;
       isInitialized = true;
-      initializeApp();
+      checkReadiness();
+      initialize();
     }
-  });
-} else {
-  // DOM already ready
-  if (!isInitialized) {
-    isInitialized = true;
-    initializeApp();
-  }
-}
 
-// Cleanup on page unload
-window.addEventListener('beforeunload', function() {
-  if (loadingTimeout) {
-    clearTimeout(loadingTimeout);
-  }
-});
-</script>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setup);
+    } else {
+      setup();
+    }
 
-<script>
-  document.addEventListener("DOMContentLoaded", function (event) {
-     type();
-     movingBackgroundImage();
-  });
-</script>
+    window.addEventListener('load', () => {
+      state.loadingSteps.dom = true;
+      state.loadingSteps.styles = true;
+      state.loadingSteps.scripts = true;
+      setTimeout(() => {
+        if (!state.loadingSteps.assets) {
+          state.loadingSteps.assets = true;
+          updateLoadingProgress();
+        }
+      }, 500);
+    });
 
-<script type="text/javascript" src="./main.70a66962.js"></script>
+    window.addEventListener('beforeunload', () => {
+      if (state.loadingTimeout) clearTimeout(state.loadingTimeout);
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      type();
+      movingBackgroundImage();
+    });
+  </script>
+
+  <script src="./main.70a66962.js" async></script>
 </body>
-
 </html>
